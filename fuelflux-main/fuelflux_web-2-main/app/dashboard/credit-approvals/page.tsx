@@ -13,15 +13,10 @@ import { toast } from '@/components/feedback/Toast';
 import { usePumpStore } from '@/stores/pumps.store';
 import ContractWizardSplitScreen from '../udhaar/components/ContractWizardSplitScreen';
 import { fetchPumpProfile, PumpProfile } from '@/services/settings.service';
+import { buildAssetUrl } from '@/lib/api-config';
 
 const getFullUrl = (url: string | null): string => {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  const backendBase = process.env.NEXT_PUBLIC_BACKEND_URL ?? '';
-  const apiBase = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/v1$/, '') ?? '';
-  const origin = typeof window !== 'undefined' ? window.location.origin : '';
-  const prefix = backendBase || apiBase || origin;
-  return `${prefix.replace(/\/*$/, '')}/${url.replace(/^\/*/, '')}`;
+  return buildAssetUrl(url);
 };
 
 // ─── Types ────────────────────────────────────────────────────────────────────

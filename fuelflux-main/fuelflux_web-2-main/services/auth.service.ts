@@ -1,7 +1,8 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import { z } from 'zod';
+import { API_BASE_URL, buildApiUrl } from '@/lib/api-config';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
+const API_URL = API_BASE_URL;
 
 // Validation schemas for security
 const UserDataSchema = z.object({
@@ -245,10 +246,13 @@ class AuthService {
         }
 
         const serverData = error.response?.data as any;
+        const isNetworkError = error.code === 'ERR_NETWORK' || !error.response;
         const message =
           (typeof serverData?.detail === 'string' ? serverData.detail : null) ||
           serverData?.message ||
-          error.message ||
+          (isNetworkError
+            ? `Network error: Unable to reach backend at ${API_BASE_URL}. Please check network connection and ensure the backend is available.`
+            : error.message) ||
           'Authentication failed';
 
         return Promise.reject(new Error(message));
@@ -295,7 +299,7 @@ class AuthService {
 
     try {
       const response = await axios.post<any>(
-        `${API_URL}/auth/refresh`,
+        buildApiUrl('/auth/refresh'),
         { refreshToken: this.refreshToken },
         {
           headers: { 'Content-Type': 'application/json' },

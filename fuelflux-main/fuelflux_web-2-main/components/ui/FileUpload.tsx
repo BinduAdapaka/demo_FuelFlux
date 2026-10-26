@@ -2,6 +2,7 @@
 
 import React, { useRef, useState, useCallback } from 'react';
 import { Upload, X, FileText, Image, CheckCircle2, AlertTriangle, Loader2 } from 'lucide-react';
+import { buildAssetUrl } from '@/lib/api-config';
 
 interface FileUploadProps {
   /** Accepted file types (e.g. ".pdf,.jpg,.png") */
@@ -137,7 +138,7 @@ export function FileUpload({
           </div>
           <div className="flex items-center gap-2 shrink-0">
             <a
-              href={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://127.0.0.1:8000'}${currentFile.url}`}
+              href={buildAssetUrl(currentFile.url)}
               target="_blank"
               rel="noopener noreferrer"
               className="text-[10px] font-bold text-emerald-600 hover:text-emerald-800 hover:underline transition-colors"

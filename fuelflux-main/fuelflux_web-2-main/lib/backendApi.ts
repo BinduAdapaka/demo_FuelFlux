@@ -9,12 +9,10 @@
  */
 
 import axios from 'axios';
-
-const BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
+import { API_BASE_URL } from './api-config';
 
 export const backendApi = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_BASE_URL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 10000,
 });

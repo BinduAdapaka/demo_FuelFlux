@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -22,10 +23,42 @@ import os
 load_dotenv()
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        # Initialize MongoDB + Beanie
+        await init_db()
+        log.info("MongoDB connected successfully")
+
+        # Start invoice scheduler
+        start_scheduler()
+
+        # Seed support tickets if collection is empty
+        from src.db.models.support import seed_support_tickets
+        await seed_support_tickets()
+        log.info("Support tickets checked/seeded successfully")
+
+        # Seed platform statistics and testimonials
+        from src.db.models.platform_content import seed_platform_content
+        await seed_platform_content()
+        log.info("Platform statistics & testimonials seeded successfully")
+
+    except Exception as e:
+        log.error("Database startup error", error=str(e))
+        traceback.print_exc()
+
+    yield
+
+    # Shutdown
+    stop_scheduler()
+    await close_db()
+
+
 app = FastAPI(
     title="Fuelflux Backend",
     description="AI-Powered Petrol Pump Management System",
-    version="1.0.0"
+    version="1.0.0",
+    lifespan=lifespan
 )
 os.makedirs("public/uploads/logos", exist_ok=True)
 app.mount("/uploads", StaticFiles(directory="public/uploads"), name="uploads")
@@ -42,8 +75,9 @@ app.add_middleware(
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "https://fuelflux-sand.vercel.app",
+        "https://fuelfluxweb-2-main.vercel.app",
     ],
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$",
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:[0-9]+)?$|^https://.*\.vercel\.app$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -88,35 +122,6 @@ app.include_router(compliance.router, prefix=settings.API_V1_STR)
 app.include_router(platform_content.router, prefix=settings.API_V1_STR)
 
 
-@app.on_event("shutdown")
-async def shutdown_event():
-    stop_scheduler()
-    await close_db()
-
-
-@app.on_event("startup")
-async def startup_event():
-    try:
-        # Initialize MongoDB + Beanie
-        await init_db()
-        log.info("MongoDB connected successfully")
-
-        # Start invoice scheduler
-        start_scheduler()
-
-        # Seed support tickets if collection is empty
-        from src.db.models.support import seed_support_tickets
-        await seed_support_tickets()
-        log.info("Support tickets checked/seeded successfully")
-
-        # Seed platform statistics and testimonials
-        from src.db.models.platform_content import seed_platform_content
-        await seed_platform_content()
-        log.info("Platform statistics & testimonials seeded successfully")
-
-    except Exception as e:
-        log.error("Database startup error", error=str(e))
-        traceback.print_exc()
 
 
 @app.get("/")

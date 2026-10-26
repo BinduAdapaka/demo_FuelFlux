@@ -2,6 +2,7 @@
 MongoDB connection using Motor (async) + Beanie ODM.
 Replaces the old SQLAlchemy engine/session setup.
 """
+from typing import Optional
 from motor.motor_asyncio import AsyncIOMotorClient
 import certifi
 
@@ -18,7 +19,7 @@ import structlog
 log = structlog.get_logger()
 
 # Global Motor client
-_client: AsyncIOMotorClient = None
+_client: Optional[AsyncIOMotorClient] = None
 
 
 def _get_client_kwargs() -> dict:

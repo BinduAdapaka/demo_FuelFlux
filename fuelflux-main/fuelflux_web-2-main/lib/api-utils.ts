@@ -1,12 +1,11 @@
 import { authService } from '../services/auth.service';
 import { ApiResponse, ApiError } from '../types/api.types';
+import { buildApiUrl } from './api-config';
 
 /**
  * Wrapper for making authenticated API calls with proper error handling
  * This ensures all API calls are properly authenticated and typed
  */
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
 
 export async function apiCall<T = any>(
   endpoint: string,
@@ -24,7 +23,7 @@ export async function apiCall<T = any>(
     signal,
   } = options;
 
-  const url = `${API_URL}${endpoint}`;
+  const url = buildApiUrl(endpoint);
   const accessToken = authService.getAccessToken();
 
   const finalHeaders: HeadersInit = {

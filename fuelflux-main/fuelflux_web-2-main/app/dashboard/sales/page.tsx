@@ -74,6 +74,7 @@ import {
 } from '@/services/inventory.service';
 import { fetchCustomers } from '@/services/udhaar.service';
 import { ownerWalletService, UpiId } from '@/services/ownerWallet.service';
+import { BACKEND_BASE_URL } from '@/lib/api-config';
 
 // ─── Constants ──────────────────────────────────────────────────
 
@@ -479,9 +480,7 @@ export default function SalesSectionPage() {
   }, [nsVehicleNumber, pumpId, nsRate]);
 
   // Backend base URL for building full receipt image links
-  const BACKEND_BASE = process.env.NEXT_PUBLIC_API_URL
-    ? process.env.NEXT_PUBLIC_API_URL.replace('/api/v1', '')
-    : 'http://127.0.0.1:8000';
+  const BACKEND_BASE = BACKEND_BASE_URL;
 
   const resetNewSaleForm = () => {
     setNsTimestamp(toLocalInputValue(new Date()));

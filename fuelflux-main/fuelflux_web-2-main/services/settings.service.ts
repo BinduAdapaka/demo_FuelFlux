@@ -1,8 +1,7 @@
 import { authService } from '@/services/auth.service';
+import { buildAssetUrl } from '@/lib/api-config';
 
 const api = () => authService.getApi();
-
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
 
 export interface PumpProfile {
     id: string;
@@ -88,11 +87,7 @@ export const fetchAllMyPumps = async (): Promise<PumpSummary[]> => {
 
 export const getLogoUrl = (logoUrl: string | null): string | null => {
     if (!logoUrl) return null;
-    if (logoUrl.startsWith('http')) return logoUrl;
-
-    const serverBase = BASE_URL.replace('/api/v1', '');
-    // /api/v1 prefix nahi chahiye — static files direct serve hoti hain
-    return `${serverBase}${logoUrl}`;  // e.g. http://localhost:8000/uploads/logos/pump_11_xxx.svg
+    return buildAssetUrl(logoUrl);
 };
 
 // ─── Logo as base64 for print ─────────────────────────────────────────────────

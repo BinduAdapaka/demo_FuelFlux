@@ -1,13 +1,8 @@
 import { ComplianceDocument, ComplianceStats, DocumentTypeConfig } from '../types/compliance';
 import { authService } from '@/services/auth.service';
+import { buildAssetUrl } from '@/lib/api-config';
 
 const getApi = () => authService.getApi();
-
-// Get the base API url to format static file paths
-const getStaticUrl = () => {
-  const base = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:8000/api/v1';
-  return base.replace('/api/v1', '');
-};
 
 const mapDocument = (doc: any): ComplianceDocument => ({
   id: doc.id,
@@ -18,7 +13,7 @@ const mapDocument = (doc: any): ComplianceDocument => ({
   issueDate: doc.issue_date,
   expiryDate: doc.expiry_date,
   status: doc.status,
-  fileUrl: doc.file_url ? `${getStaticUrl()}${doc.file_url}` : null,
+  fileUrl: doc.file_url ? buildAssetUrl(doc.file_url) : null,
   fileName: doc.file_name || null,
   uploadedAt: doc.created_at || null,
   isVerified: doc.is_verified || false,

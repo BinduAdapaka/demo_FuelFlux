@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import { toast } from '@/components/feedback/Toast';
 import backendApi from '@/lib/backendApi';
+import { buildAssetUrl } from '@/lib/api-config';
 
 interface LogisticsPartner {
   id: string;
@@ -245,7 +246,7 @@ export default function AdminLogisticsPage() {
                           return (
                             <a
                               key={doc.doc_type}
-                              href={`${process.env.NEXT_PUBLIC_API_URL?.replace('/api/v1', '') || 'http://127.0.0.1:8000'}${doc.file_url}`}
+                              href={buildAssetUrl(doc.file_url)}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center gap-1.5 p-1.5 bg-white border border-slate-200 hover:border-orange-300 hover:bg-orange-50/20 rounded-lg text-[10px] font-bold text-slate-700 hover:text-orange-500 transition-colors"
