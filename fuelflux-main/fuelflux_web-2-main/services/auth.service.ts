@@ -181,7 +181,7 @@ class AuthService {
       headers: {
         'Content-Type': 'application/json',
       },
-      timeout: 10000,
+      timeout: 45000,
     });
 
     // Request interceptor - add token to headers
@@ -246,12 +246,15 @@ class AuthService {
         }
 
         const serverData = error.response?.data as any;
+        const isTimeout = error.code === 'ECONNABORTED' || error.message?.includes('timeout');
         const isNetworkError = error.code === 'ERR_NETWORK' || !error.response;
         const message =
           (typeof serverData?.detail === 'string' ? serverData.detail : null) ||
           serverData?.message ||
-          (isNetworkError
-            ? `Network error: Unable to reach backend at ${API_BASE_URL}. Please check network connection and ensure the backend is available.`
+          (isTimeout
+            ? `Backend wake-up timeout. The backend is spinning up on Render free tier — please retry in a few seconds.`
+            : isNetworkError
+            ? `Network error: Unable to reach backend at ${API_BASE_URL}. If running locally, please ensure your browser is on http://localhost:3000.`
             : error.message) ||
           'Authentication failed';
 
@@ -303,7 +306,7 @@ class AuthService {
         { refreshToken: this.refreshToken },
         {
           headers: { 'Content-Type': 'application/json' },
-          timeout: 10000,
+          timeout: 30000,
         }
       );
 
