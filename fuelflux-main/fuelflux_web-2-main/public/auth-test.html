@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FuelFlux Auth Bridge</title>
+  <style>
+    body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background: #0f172a; color: white; }
+    .btn { padding: 12px 24px; margin: 10px; background: #f97316; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; text-decoration: none; font-size: 16px; }
+    .btn-blue { background: #2563eb; }
+  </style>
+</head>
+<body>
+  <h2>FuelFlux Session Initializer</h2>
+  <p>Click below to jump directly into the verified sessions:</p>
+  <div>
+    <button class="btn" id="btn-logistic">Go to Logistic Dashboard</button>
+    <button class="btn btn-blue" id="btn-pump">Go to Pump Owner Dashboard</button>
+  </div>
+
+  <script>
+    const logisticUser = {
+      id: "6abbbd6917dddc31e434d8b3",
+      email: "b.nduadapaka@gmail.com",
+      full_name: "Bindu Adapaka",
+      roles: ["logistic"],
+      company_name: "amigoo ",
+      gstin: "35A12243",
+      billing_address: "jjwfjfak",
+      verification_status: "verified"
+    };
+    const logisticToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YWJiYmQ2OTE3ZGRkYzMxZTQzNGQ4YjMiLCJleHAiOjE3OTQ5OTg4MzJ9.Aavt1aW9z3lNrXJIkMfoTTiYH55DfIkPKymPSW4OsZw";
+
+    const pumpUser = {
+      id: "6ab8e831681621266b084972",
+      email: "adapakab.ndu@gmail.com",
+      full_name: "Bindu Adapaka",
+      roles: ["pump_owner"],
+      is_active: true
+    };
+    const pumpToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2YWI4ZTgzMTY4MTYyMTI2NmIwODQ5NzIiLCJleHAiOjE3OTQ5OTg4MzJ9.t5k_ufb2nb2ta6N5mJ4birF9TiZ7fn-MOtUcWhpSkUE";
+
+    document.getElementById('btn-logistic').onclick = function() {
+      localStorage.setItem('auth-storage', JSON.stringify({
+        state: { user: logisticUser, accessToken: logisticToken, refreshToken: logisticToken, isAuthenticated: true, activeRole: 'logistic' },
+        version: 0
+      }));
+      localStorage.setItem('fuelflux_accessToken', logisticToken);
+      localStorage.setItem('fuelflux_refreshToken', logisticToken);
+      document.cookie = `fuelflux_accessToken=${logisticToken}; path=/; max-age=86400`;
+      document.cookie = `fuelflux_activeRole=logistic; path=/; max-age=86400`;
+      window.location.href = '/logistic/dashboard';
+    };
+
+    document.getElementById('btn-pump').onclick = function() {
+      localStorage.setItem('auth-storage', JSON.stringify({
+        state: { user: pumpUser, accessToken: pumpToken, refreshToken: pumpToken, isAuthenticated: true, activeRole: 'pump_owner' },
+        version: 0
+      }));
+      localStorage.setItem('fuelflux_accessToken', pumpToken);
+      localStorage.setItem('fuelflux_refreshToken', pumpToken);
+      document.cookie = `fuelflux_accessToken=${pumpToken}; path=/; max-age=86400`;
+      document.cookie = `fuelflux_activeRole=pump_owner; path=/; max-age=86400`;
+      window.location.href = '/dashboard';
+    };
+  </script>
+</body>
+</html>

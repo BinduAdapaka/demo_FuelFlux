@@ -1,0 +1,36 @@
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import Optional
+
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        # Render Secret Files are mounted under /etc/secrets. Environment
+        # variables still take precedence over both local and mounted files.
+        env_file=(".env", "/etc/secrets/.env"),
+        env_file_encoding="utf-8",
+        extra="ignore",
+        case_sensitive=True
+    )
+
+    PROJECT_NAME: str = "Fuelflux"
+    API_V1_STR: str = "/api/v1"
+    ENVIRONMENT: str = "development"
+
+    # MongoDB Atlas
+    MONGODB_URL: str = "mongodb://localhost:27017"
+    MONGODB_DB_NAME: str = "fuelflux"
+
+    # Security
+    SECRET_KEY: str = "supersecretkeychangethisinproduction2026"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 10080
+
+    # Azure (keep optional)
+    AZURE_IOT_HUB_CONNECTION_STRING: Optional[str] = None
+
+    # Razorpay
+    RAZORPAY_KEY_ID: Optional[str] = None
+    RAZORPAY_KEY_SECRET: Optional[str] = None
+
+
+settings = Settings()

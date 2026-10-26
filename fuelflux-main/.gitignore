@@ -1,0 +1,34 @@
+# Environment files and secrets
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+
+# Frontend dependencies and build output
+**/node_modules/
+**/.next/
+**/out/
+
+# Python caches and virtual environments
+**/__pycache__/
+**/*.pyc
+**/.venv/
+**/venv/
+
+# Local databases
+**/*.db
+**/*.sqlite3
+
+# Local uploads and private documents
+**/public/uploads/
+
+# Logs and OS files
+*.log
+.DS_Store
+Thumbs.db
+
+#Local Mongodb Files
+/data/
